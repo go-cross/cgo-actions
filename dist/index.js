@@ -34157,9 +34157,8 @@ const TempBinDir = 'bin_temp';
 const TempBinName = 'go-cross-bin';
 const TempBinPath = `${TempBinDir}/${TempBinName}`;
 function getTempBinPath(input) {
-    return `${input.dir}/` + input.target.includes('windows')
-        ? `${TempBinPath}.exe`
-        : TempBinPath;
+    return (`${input.dir}/` +
+        (input.target.includes('windows') ? `${TempBinPath}.exe` : TempBinPath));
 }
 const $$ = $({ stdio: 'inherit' });
 
@@ -36051,7 +36050,7 @@ class Runner {
             target: input.target,
             sha: this.ctx.sha,
             short_sha: this.ctx.sha.slice(0, 7),
-            pr: this.ctx.issue.number.toString()
+            pr: this.ctx.issue.number?.toString() ?? ''
         };
         let output = input.output;
         for (const [magic, target] of Object.entries(magicMap)) {

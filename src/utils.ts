@@ -10,9 +10,10 @@ export const TempBinName = 'go-cross-bin'
 export const TempBinPath = `${TempBinDir}/${TempBinName}`
 
 export function getTempBinPath(input: Input) {
-  return `${input.dir}/` + input.target.includes('windows')
-    ? `${TempBinPath}.exe`
-    : TempBinPath
+  return (
+    `${input.dir}/` +
+    (input.target.includes('windows') ? `${TempBinPath}.exe` : TempBinPath)
+  )
 }
 
 export const $$ = $({ stdio: 'inherit' })
