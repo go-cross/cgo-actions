@@ -32,12 +32,11 @@ registerEngine({
   },
   async run(input) {
     const target = targetMap[input.target]
-    // xgo -out ${input.output} -dest ${input.dir} -pkg ${input.pkg} -targets ${target} ${input.flags}
     await $$({
       cwd: input.dir
-    })`xgo -out ${TempBinDir}/${TempBinName} -targets ${target} ${input.flags} ${input.pkg}`
+    })`xgo -out ${TempBinName} --targets ${target} ${input.flags} ${input.pkg}`
     renameSync(
-      `${TempBinDir}/${TempBinName}`,
+      `${TempBinName}-${input.target}${input.target.includes('windows') ? '.exe' : ''}`,
       `${TempBinDir}/${TempBinName.replace(input.target, '')}`
     )
   }

@@ -36090,11 +36090,10 @@ registerEngine({
     },
     async run(input) {
         const target = targetMap[input.target];
-        // xgo -out ${input.output} -dest ${input.dir} -pkg ${input.pkg} -targets ${target} ${input.flags}
         await $$({
             cwd: input.dir
-        }) `xgo -out ${TempBinDir}/${TempBinName} -targets ${target} ${input.flags} ${input.pkg}`;
-        (0,external_fs_.renameSync)(`${TempBinDir}/${TempBinName}`, `${TempBinDir}/${TempBinName.replace(input.target, '')}`);
+        }) `xgo -out ${TempBinName} --targets ${target} ${input.flags} ${input.pkg}`;
+        (0,external_fs_.renameSync)(`${TempBinName}-${input.target}${input.target.includes('windows') ? '.exe' : ''}`, `${TempBinDir}/${TempBinName.replace(input.target, '')}`);
     }
 });
 
