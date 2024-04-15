@@ -34154,10 +34154,12 @@ function engineKey(engine) {
     return engine.targets.join(',');
 }
 const TempBinDir = 'bin_temp';
-const TempBinName = 'go-cross-cgo';
+const TempBinName = 'go-cross-bin';
 const TempBinPath = `${TempBinDir}/${TempBinName}`;
-function getTempBinPath(target) {
-    return target.includes('windows') ? `${TempBinPath}.exe` : TempBinPath;
+function getTempBinPath(input) {
+    return `${input.dir}/` + input.target.includes('windows')
+        ? `${TempBinPath}.exe`
+        : TempBinPath;
 }
 const $$ = $({ stdio: 'inherit' });
 
@@ -35972,6 +35974,12 @@ class Runner {
     constructor(ctx) {
         this.ctx = ctx;
         this.initInput(ctx);
+        core.info(`Making necessary directories...`);
+        for (const dir of [TempBinDir, this.input.out_dir]) {
+            if (!(0,external_fs_.existsSync)(dir)) {
+                (0,external_fs_.mkdirSync)(dir, { recursive: true });
+            }
+        }
     }
     input;
     targets;
@@ -35988,6 +35996,7 @@ class Runner {
             output,
             out_dir
         };
+        core.info(`Input: ${JSON.stringify(this.input)}...`);
         const targets = core.getInput('targets')
             .split(',')
             .map(t => t.trim());
@@ -36005,30 +36014,28 @@ class Runner {
                 this.targets.push(target);
             }
         }
-        core.info(`Targets: \n${this.targets.join('\n')}`);
+        core.info(`Targets: \n${this.targets.join('\n')}...`);
     }
     async run() {
         for (const target of this.targets) {
             const engine = engines.get(target);
             if (!engine) {
-                throw new Error(`Engine not found: ${target}`);
+                throw new Error(`Engine not found: ${target}!`);
             }
-            if (engine.prepare && !prepared.has(engineKey(engine))) {
-                core.info(`Preparing engine: ${engineKey(engine)}`);
-                await engine.prepare({
-                    ...this.input,
-                    target
-                });
-                prepared.add(engineKey(engine));
-            }
-            core.info(`Compiling target: ${target}`);
-            const out_file = (await engine.run({
+            const input = {
                 ...this.input,
                 target
-            })) ?? getTempBinPath(target);
-            core.info(`Output file: ${out_file}`);
+            };
+            if (engine.prepare && !prepared.has(engineKey(engine))) {
+                core.info(`Preparing engine: ${engineKey(engine)}`);
+                await engine.prepare(input);
+                prepared.add(engineKey(engine));
+            }
+            core.info(`Compiling target: ${target}...`);
+            const out_file = (await engine.run(input)) ?? getTempBinPath(input);
+            core.info(`Output file: ${out_file}...`);
             const output = await this.getOutput({ ...this.input, target });
-            core.info(`Renaming to: ${output}`);
+            core.info(`Renaming to: ${output}...`);
             (0,external_fs_.renameSync)(out_file, `${this.input.out_dir}/${output}`);
         }
         await this.setOutput();
@@ -36093,7 +36100,7 @@ registerEngine({
         await $$({
             cwd: input.dir
         }) `xgo -targets=${target} -out ${TempBinName} ${input.flags} ${input.pkgs}`;
-        (0,external_fs_.renameSync)(`${TempBinName}-${input.target}${input.target.includes('windows') ? '.exe' : ''}`, `${TempBinDir}/${TempBinName.replace(input.target, '')}`);
+        (0,external_fs_.renameSync)(`${input.dir}/${TempBinName}-${input.target}${input.target.includes('windows') ? '.exe' : ''}`, `${TempBinDir}/${TempBinName.replace(input.target, '')}`);
     }
 });
 

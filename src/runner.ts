@@ -1,7 +1,7 @@
 import { Context, CommonInput, Engine, Input } from './types'
 import * as core from '@actions/core'
-import { engineKey, getTempBinPath } from './utils'
-import { readdirSync, renameSync } from 'fs'
+import { TempBinDir, engineKey, getTempBinPath } from './utils'
+import { readdirSync, renameSync, mkdirSync, existsSync } from 'fs'
 import { minimatch } from 'minimatch'
 
 const engines = new Map<string, Engine>()
@@ -16,6 +16,12 @@ export function registerEngine(engine: Engine) {
 export class Runner {
   public constructor(readonly ctx: Context) {
     this.initInput(ctx)
+    core.info(`Making necessary directories...`)
+    for (const dir of [TempBinDir, this.input.out_dir]) {
+      if (!existsSync(dir)) {
+        mkdirSync(dir, { recursive: true })
+      }
+    }
   }
   private input!: CommonInput
   private targets!: string[]
@@ -32,6 +38,7 @@ export class Runner {
       output,
       out_dir
     }
+    core.info(`Input: ${JSON.stringify(this.input)}...`)
     const targets = core
       .getInput('targets')
       .split(',')
@@ -50,32 +57,29 @@ export class Runner {
         this.targets.push(target)
       }
     }
-    core.info(`Targets: \n${this.targets.join('\n')}`)
+    core.info(`Targets: \n${this.targets.join('\n')}...`)
   }
 
   public async run(): Promise<void> {
     for (const target of this.targets) {
       const engine = engines.get(target)
       if (!engine) {
-        throw new Error(`Engine not found: ${target}`)
+        throw new Error(`Engine not found: ${target}!`)
+      }
+      const input = {
+        ...this.input,
+        target
       }
       if (engine.prepare && !prepared.has(engineKey(engine))) {
         core.info(`Preparing engine: ${engineKey(engine)}`)
-        await engine.prepare({
-          ...this.input,
-          target
-        })
+        await engine.prepare(input)
         prepared.add(engineKey(engine))
       }
-      core.info(`Compiling target: ${target}`)
-      const out_file =
-        (await engine.run({
-          ...this.input,
-          target
-        })) ?? getTempBinPath(target)
-      core.info(`Output file: ${out_file}`)
+      core.info(`Compiling target: ${target}...`)
+      const out_file = (await engine.run(input)) ?? getTempBinPath(input)
+      core.info(`Output file: ${out_file}...`)
       const output = await this.getOutput({ ...this.input, target })
-      core.info(`Renaming to: ${output}`)
+      core.info(`Renaming to: ${output}...`)
       renameSync(out_file, `${this.input.out_dir}/${output}`)
     }
     await this.setOutput()

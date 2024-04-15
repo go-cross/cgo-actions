@@ -45,8 +45,8 @@ inputs:
 
 # Define your outputs here.
 outputs:
-  time:
-    description: 'Your output description here'
+  files:
+    description: 'The files that were built'
 
 runs:
   using: node20
