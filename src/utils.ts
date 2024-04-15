@@ -1,3 +1,4 @@
+import { $ } from 'execa'
 import { Engine } from './types'
 
 export function engineKey(engine: Engine) {
@@ -11,3 +12,5 @@ export const TempBinPath = `${TempBinDir}/${TempBinName}`
 export function getTempBinPath(target: string) {
   return target.includes('windows') ? `${TempBinPath}.exe` : TempBinPath
 }
+
+export const $$ = $({ stdio: 'inherit' })

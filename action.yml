@@ -13,7 +13,7 @@ inputs:
     description: 'The directory to build'
     required: true
     default: '.'
-  packages:
+  package:
     description: 'The packages to build'
     required: true
     default: '.'

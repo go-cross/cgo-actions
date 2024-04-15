@@ -1,7 +1,6 @@
-import { $ } from 'execa'
 import { registerEngine } from '../runner'
 import { renameSync } from 'fs'
-import { TempBinDir, TempBinName } from '../utils'
+import { $$, TempBinDir, TempBinName } from '../utils'
 
 const targetMap = {
   'darwin-amd64': 'darwin/amd64',
@@ -27,14 +26,14 @@ registerEngine({
   targets: Object.keys(targetMap),
   async prepare(input) {
     // docker pull crazymax/xgo:latest
-    await $`docker pull crazymax/xgo:latest`
+    await $$`docker pull crazymax/xgo:latest`
     // go install github.com/crazy-max/xgo@latest
-    await $`go install github.com/crazy-max/xgo@latest`
+    await $$`go install github.com/crazy-max/xgo@latest`
   },
   async run(input) {
     const target = targetMap[input.target]
     // xgo -out ${input.output} -dest ${input.dir} -pkg ${input.pkg} -targets ${target} ${input.flags}
-    await $`
+    await $$`
 cd ${input.dir}
 xgo -out ${TempBinDir}/${TempBinName} -targets ${target} ${input.flags} ${input.pkg}
 `

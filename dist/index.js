@@ -31963,6 +31963,8 @@ var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
 
+// EXTERNAL MODULE: ./node_modules/.pnpm/@actions+core@1.10.1/node_modules/@actions/core/lib/core.js
+var core = __nccwpck_require__(9093);
 ;// CONCATENATED MODULE: external "node:buffer"
 const external_node_buffer_namespaceObject = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:buffer");
 ;// CONCATENATED MODULE: external "node:path"
@@ -34146,9 +34148,8 @@ function execaNode(scriptPath, args, options = {}) {
 	);
 }
 
-// EXTERNAL MODULE: ./node_modules/.pnpm/@actions+core@1.10.1/node_modules/@actions/core/lib/core.js
-var core = __nccwpck_require__(9093);
 ;// CONCATENATED MODULE: ./src/utils.ts
+
 function engineKey(engine) {
     return engine.targets.join(',');
 }
@@ -34158,6 +34159,7 @@ const TempBinPath = `${TempBinDir}/${TempBinName}`;
 function getTempBinPath(target) {
     return target.includes('windows') ? `${TempBinPath}.exe` : TempBinPath;
 }
+const $$ = $({ stdio: 'inherit' });
 
 // EXTERNAL MODULE: external "fs"
 var external_fs_ = __nccwpck_require__(7147);
@@ -36059,7 +36061,6 @@ class Runner {
 
 
 
-
 const targetMap = {
     'darwin-amd64': 'darwin/amd64',
     'darwin-arm64': 'darwin/arm64',
@@ -36083,14 +36084,14 @@ registerEngine({
     targets: Object.keys(targetMap),
     async prepare(input) {
         // docker pull crazymax/xgo:latest
-        await $ `docker pull crazymax/xgo:latest`;
+        await $$ `docker pull crazymax/xgo:latest`;
         // go install github.com/crazy-max/xgo@latest
-        await $ `go install github.com/crazy-max/xgo@latest`;
+        await $$ `go install github.com/crazy-max/xgo@latest`;
     },
     async run(input) {
         const target = targetMap[input.target];
         // xgo -out ${input.output} -dest ${input.dir} -pkg ${input.pkg} -targets ${target} ${input.flags}
-        await $ `
+        await $$ `
 cd ${input.dir}
 xgo -out ${TempBinDir}/${TempBinName} -targets ${target} ${input.flags} ${input.pkg}
 `;
