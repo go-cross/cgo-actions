@@ -34,10 +34,14 @@ inputs:
     # linux-arm-musleabihf, linux-armel-musleabihf, linux-armv5l-musleabihf, linux-armv6-musleabihf, linux-armv7l-musleabihf, linux-armv7r-musleabihf
     # windows-386, windows-amd64, windows-arm64
     default: 'linux-amd64'
+  out-dir:
+    description: 'The output directory'
+    required: false
+    default: 'bin'
   output:
     description: 'The output binary name'
     required: false
-    default: '$repo-$short-$target'
+    default: '$repo-$target'
 
 # Define your outputs here.
 outputs:
