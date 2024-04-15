@@ -26,23 +26,28 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version-file: .node-version
-          cache: npm
+      
+      - uses: pnpm/action-setup@v3
+        name: Install pnpm
+        with:
+          version: 8
+          run_install: false
 
       - name: Install Dependencies
         id: npm-ci
-        run: npm ci
+        run: pnpm i
 
       - name: Check Format
         id: npm-format-check
-        run: npm run format:check
+        run: pnpm run format:check
 
       - name: Lint
         id: npm-lint
-        run: npm run lint
+        run: pnpm run lint
 
       - name: Test
         id: npm-ci-test
-        run: npm run ci-test
+        run: pnpm run ci-test
 
   test-action:
     name: GitHub Actions Test
