@@ -36092,7 +36092,7 @@ registerEngine({
         const target = targetMap[input.target];
         await $$({
             cwd: input.dir
-        }) `xgo -out ${TempBinName} --targets ${target} ${input.flags} ${input.pkg}`;
+        }) `xgo -targets=${target} -out "${TempBinName}" ${input.flags} ${input.pkg}`;
         (0,external_fs_.renameSync)(`${TempBinName}-${input.target}${input.target.includes('windows') ? '.exe' : ''}`, `${TempBinDir}/${TempBinName.replace(input.target, '')}`);
     }
 });
