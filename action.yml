@@ -20,7 +20,7 @@ inputs:
   flags:
     description: 'The flags to pass to the go build command'
     required: false
-    default: '-ldflags "-s -w"'
+    default: '-ldflags="-w -s"'
   targets:
     description: 'The targets to build for'
     required: false
