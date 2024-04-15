@@ -33,10 +33,9 @@ registerEngine({
   async run(input) {
     const target = targetMap[input.target]
     // xgo -out ${input.output} -dest ${input.dir} -pkg ${input.pkg} -targets ${target} ${input.flags}
-    await $$`
-cd ${input.dir}
-xgo -out ${TempBinDir}/${TempBinName} -targets ${target} ${input.flags} ${input.pkg}
-`
+    await $$({
+      cwd: input.dir
+    })`xgo -out ${TempBinDir}/${TempBinName} -targets ${target} ${input.flags} ${input.pkg}`
     renameSync(
       `${TempBinDir}/${TempBinName}`,
       `${TempBinDir}/${TempBinName.replace(input.target, '')}`
