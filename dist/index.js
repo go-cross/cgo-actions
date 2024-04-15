@@ -36099,7 +36099,9 @@ registerEngine({
         await $$({
             cwd: input.dir
         }) `xgo -targets=${target} -out ${TempBinName} ${input.flags} ${input.pkgs}`;
-        (0,external_fs_.renameSync)(`${input.dir}/${TempBinName}-${input.target}${input.target.includes('windows') ? '.exe' : ''}`, `${TempBinDir}/${TempBinName.replace(input.target, '')}`);
+        const outBin = `${TempBinDir}/${TempBinName.replace(input.target, '')}`;
+        (0,external_fs_.renameSync)(`${input.dir}/${TempBinName}-${input.target}${input.target.includes('windows') ? '.exe' : ''}`, outBin);
+        return outBin;
     }
 });
 
