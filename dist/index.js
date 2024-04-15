@@ -35977,13 +35977,13 @@ class Runner {
     targets;
     initInput(ctx) {
         const dir = core.getInput('dir');
-        const pkg = core.getInput('package');
+        const pkgs = core.getInput('packages');
         const flags = core.getInput('flags');
         const output = core.getInput('output');
         const out_dir = core.getInput('out-dir');
         this.input = {
             dir,
-            pkg,
+            pkgs,
             flags,
             output,
             out_dir
@@ -36021,7 +36021,7 @@ class Runner {
                 });
                 prepared.add(engineKey(engine));
             }
-            core.info(`Building target: ${target}`);
+            core.info(`Compiling target: ${target}`);
             const out_file = (await engine.run({
                 ...this.input,
                 target
@@ -36092,7 +36092,7 @@ registerEngine({
         const target = targetMap[input.target];
         await $$({
             cwd: input.dir
-        }) `xgo -targets=${target} -out "${TempBinName}" ${input.flags} ${input.pkg}`;
+        }) `xgo -targets=${target} -out ${TempBinName} ${input.flags} ${input.pkgs}`;
         (0,external_fs_.renameSync)(`${TempBinName}-${input.target}${input.target.includes('windows') ? '.exe' : ''}`, `${TempBinDir}/${TempBinName.replace(input.target, '')}`);
     }
 });

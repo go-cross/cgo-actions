@@ -2,7 +2,7 @@ export { Context } from '@actions/github/lib/context'
 
 export type CommonInput = {
   dir: string
-  pkg: string
+  pkgs: string
   flags: string
   out_dir: string
   output: string

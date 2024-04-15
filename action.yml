@@ -13,14 +13,14 @@ inputs:
     description: 'The directory to build'
     required: true
     default: '.'
-  package:
+  packages:
     description: 'The packages to build'
     required: true
     default: '.'
   flags:
     description: 'The flags to pass to the go build command'
     required: false
-    default: '-ldflags="-w -s"'
+    default: '-ldflags=-w -s'
   targets:
     description: 'The targets to build for'
     required: false

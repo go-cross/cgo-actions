@@ -21,13 +21,13 @@ export class Runner {
   private targets!: string[]
   private initInput(ctx: Context) {
     const dir = core.getInput('dir')
-    const pkg = core.getInput('package')
+    const pkgs = core.getInput('packages')
     const flags = core.getInput('flags')
     const output = core.getInput('output')
     const out_dir = core.getInput('out-dir')
     this.input = {
       dir,
-      pkg,
+      pkgs,
       flags,
       output,
       out_dir
@@ -67,7 +67,7 @@ export class Runner {
         })
         prepared.add(engineKey(engine))
       }
-      core.info(`Building target: ${target}`)
+      core.info(`Compiling target: ${target}`)
       const out_file =
         (await engine.run({
           ...this.input,

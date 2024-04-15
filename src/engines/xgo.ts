@@ -34,7 +34,7 @@ registerEngine({
     const target = targetMap[input.target]
     await $$({
       cwd: input.dir
-    })`xgo -targets=${target} -out "${TempBinName}" ${input.flags} ${input.pkg}`
+    })`xgo -targets=${target} -out ${TempBinName} ${input.flags} ${input.pkgs}`
     renameSync(
       `${TempBinName}-${input.target}${input.target.includes('windows') ? '.exe' : ''}`,
       `${TempBinDir}/${TempBinName.replace(input.target, '')}`
