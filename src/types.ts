@@ -17,4 +17,3 @@ export type Engine = {
   prepare?(input: Input): Promise<void>
   run(input: Input): Promise<string | void>
 }
-

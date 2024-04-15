@@ -36003,6 +36003,7 @@ class Runner {
                 this.targets.push(target);
             }
         }
+        core.info(`Targets: \n${this.targets.join('\n')}`);
     }
     async run() {
         for (const target of this.targets) {
@@ -36011,18 +36012,28 @@ class Runner {
                 throw new Error(`Engine not found: ${target}`);
             }
             if (engine.prepare && !prepared.has(engineKey(engine))) {
+                core.info(`Preparing engine: ${engineKey(engine)}`);
                 await engine.prepare({
                     ...this.input,
                     target
                 });
                 prepared.add(engineKey(engine));
             }
+            core.info(`Building target: ${target}`);
             const out_file = (await engine.run({
                 ...this.input,
                 target
             })) ?? getTempBinPath(target);
-            (0,external_fs_.renameSync)(out_file, `${this.input.out_dir}/${await this.getOutput({ ...this.input, target })}`);
+            core.info(`Output file: ${out_file}`);
+            const output = await this.getOutput({ ...this.input, target });
+            core.info(`Renaming to: ${output}`);
+            (0,external_fs_.renameSync)(out_file, `${this.input.out_dir}/${output}`);
         }
+        await this.setOutput();
+    }
+    async setOutput() {
+        const files = (0,external_fs_.readdirSync)(this.input.out_dir);
+        core.setOutput('files', files.join('\n'));
     }
     async getOutput(input) {
         const magicMap = {
@@ -36031,7 +36042,7 @@ class Runner {
             target: input.target,
             sha: this.ctx.sha,
             short_sha: this.ctx.sha.slice(0, 7),
-            pr: this.ctx.issue.number.toString(),
+            pr: this.ctx.issue.number.toString()
         };
         let output = input.output;
         for (const [magic, target] of Object.entries(magicMap)) {
