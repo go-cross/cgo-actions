@@ -41,7 +41,7 @@ inputs:
   output:
     description: 'The output binary name'
     required: false
-    default: '$repo-$target'
+    default: '$repo-$target$ext'
 
 # Define your outputs here.
 outputs:

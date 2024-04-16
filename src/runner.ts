@@ -97,7 +97,8 @@ export class Runner {
       target: input.target,
       sha: this.ctx.sha,
       short_sha: this.ctx.sha.slice(0, 7),
-      pr: this.ctx.issue.number?.toString() ?? ''
+      pr: this.ctx.issue.number?.toString() ?? '',
+      ext: input.target.includes('windows') ? '.exe' : ''
     } as Record<string, string | ((input: Input) => string)>
     let output = input.output
     for (const [magic, target] of Object.entries(magicMap)) {
