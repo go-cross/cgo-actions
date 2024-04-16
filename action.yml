@@ -10,12 +10,12 @@ branding:
 # Define your inputs here.
 inputs:
   dir:
-    description: 'The directory to build'
-    required: true
+    description: 'The directory to work'
+    required: false
     default: '.'
   packages:
     description: 'The packages to build'
-    required: true
+    required: false
     default: '.'
   flags:
     description: 'The flags to pass to the go build command'

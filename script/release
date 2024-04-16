@@ -5,7 +5,7 @@
 # This is a helper script to tag and push a new release. GitHub Actions use
 # release tags to allow users to select a specific version of the action to use.
 #
-# See: https://github.com/actions/typescript-action#publishing-a-new-release
+# See: https://github.com/go-cross/cgo-actions#publishing-a-new-release
 #
 # This script will do the following:
 #
