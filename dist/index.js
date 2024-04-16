@@ -36341,7 +36341,7 @@ const val_files = [
     'mips64-linux-musl-cross',
     'mips64el-linux-musl-cross',
     'mipsel-linux-musl-cross',
-    'powerpc64-linux-musl-cross',
+    // 'powerpc64-linux-musl-cross',
     'powerpc64le-linux-musl-cross',
     'riscv64-linux-musl-cross',
     's390x-linux-musl-cross',
