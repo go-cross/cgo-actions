@@ -36100,6 +36100,7 @@ class Runner {
             .map(t => t.trim());
         this.targets = [];
         const supportedTargets = Array.from(engines.keys());
+        core.info(`Supported targets: \n${supportedTargets.join('\n')}...`);
         for (const target of supportedTargets) {
             for (const pattern of targets) {
                 if (picomatch_default()(pattern)(target)) {
@@ -36191,12 +36192,13 @@ registerEngine({
     async run(input) {
         const target = targetMap[input.target];
         await input.$ `xgo -targets=${target} -out ${TempBinName} ${input.flags} ${input.pkgs}`;
-        const outBin = `${TempBinName.replace(input.target, '')}`;
+        const curBin = `${TempBinName}-${input.target}${input.target.includes('windows') ? '.exe' : ''}`;
+        const outBin = curBin.replace(input.target, '');
         // renameSync(
         //   `${input.dir}/${TempBinName}-${input.target}${input.target.includes('windows') ? '.exe' : ''}`,
         //   outBin
         // )
-        await input.$ `mv ${TempBinName}* ${outBin}`;
+        await input.$ `mv ${curBin} ${outBin}`;
         return outBin;
     }
 });
@@ -36363,11 +36365,11 @@ const osMapRev = mapRev(osMap);
 function fileToTarget(file) {
     let name = file.replace('-cross', '');
     const [arch, os, musl] = name.split('-');
-    return `${osMap[os]}-${archMap[arch]}-${musl}`;
+    return `${osMap[os] ?? os}-${archMap[arch] ?? arch}-${musl}`;
 }
 function targetToFile(target) {
     const [os, arch, musl] = target.split('-');
-    return `${archMapRev[arch]}-${osMapRev[os]}-${musl}-cross`;
+    return `${archMapRev[arch] ?? arch}-${osMapRev[os] ?? os}-${musl}-cross`;
 }
 function engineGen(files) {
     registerEngine({

@@ -166,12 +166,12 @@ const osMapRev = mapRev(osMap)
 function fileToTarget(file: string) {
   let name = file.replace('-cross', '')
   const [arch, os, musl] = name.split('-')
-  return `${osMap[os]}-${archMap[arch]}-${musl}`
+  return `${osMap[os] ?? os}-${archMap[arch] ?? arch}-${musl}`
 }
 
 function targetToFile(target: string) {
   const [os, arch, musl] = target.split('-')
-  return `${archMapRev[arch]}-${osMapRev[os]}-${musl}-cross`
+  return `${archMapRev[arch] ?? arch}-${osMapRev[os] ?? os}-${musl}-cross`
 }
 
 function engineGen(files: string[]) {
