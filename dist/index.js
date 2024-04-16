@@ -36436,7 +36436,7 @@ registerEngine({
                 CC: 'zcc',
                 CXX: 'z++'
             }
-        }) `go build -o ${TempBinName} ${input.flags} ${input.pkgs}`;
+        }) `go build -o ${TempBinName}.exe ${input.flags} ${input.pkgs}`;
     }
 });
 
