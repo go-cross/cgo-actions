@@ -74,6 +74,53 @@ jobs:
 | out-dir  | The output directory                      | No       | bin               |
 | output   | The output binary name                    | No       | $repo-$target$ext |
 
+### Supported Targets
+
+Use glob patterns to match the targets you want to build for.
+
+- darwin-amd64
+- darwin-arm64
+- linux-386
+- linux-amd64
+- linux-arm-5
+- linux-arm-6
+- linux-arm-7
+- linux-arm64
+- linux-mips
+- linux-mipsle
+- linux-mips64
+- linux-mips64le
+- linux-ppc64le
+- linux-riscv64
+- linux-s390x
+- windows-386
+- windows-amd64
+- linux-arm64-musl
+- linux-arm-musleabi
+- linux-arm-musleabihf
+- linux-armel-musleabi
+- linux-armel-musleabihf
+- linux-armv5l-musleabi
+- linux-armv5l-musleabihf
+- linux-armv6-musleabi
+- linux-armv6-musleabihf
+- linux-armv7l-musleabihf
+- linux-armv7m-musleabi
+- linux-armv7r-musleabihf
+- linux-mips-musl
+- linux-mips64-musl
+- linux-mips64le-musl
+- linux-mipsle-musl
+- linux-ppc64le-musl
+- linux-riscv64-musl
+- linux-s390x-musl
+- linux-amd64-musl
+- windows-arm64
+- android-386
+- android-amd64
+- android-arm64
+- android-arm
+
 ## Outputs
 
 | Output | Description               |
