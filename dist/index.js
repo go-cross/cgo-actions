@@ -36404,6 +36404,37 @@ function engineGen(files) {
 }
 engineGen(val_files);
 
+;// CONCATENATED MODULE: ./src/engines/win-arm64.ts
+
+
+const zcc = `#!/bin/sh
+zig cc -target aarch64-windows-gnu $@
+`;
+const zcxx = `#!/bin/sh
+zig c++ -target aarch64-windows-gnu $@
+`;
+registerEngine({
+    targets: ['windows-arm64'],
+    async prepare(input) {
+        await $$ `sudo snap install zig --classic --beta`;
+        await $$ `echo "${zcc}" > /usr/local/bin/zcc`;
+        await $$ `chmod +x /usr/local/bin/zcc`;
+        await $$ `echo "${zcxx}" > /usr/local/bin/z++`;
+        await $$ `chmod +x /usr/local/bin/z++`;
+    },
+    async run(input) {
+        await input.$({
+            env: {
+                CGO_ENABLED: '1',
+                GOOS: 'windows',
+                GOARCH: 'arm64',
+                CC: 'zcc',
+                CXX: 'z++'
+            }
+        }) `go build -o ${TempBinName} ${input.flags} ${input.pkgs}`;
+    }
+});
+
 // EXTERNAL MODULE: ./node_modules/.pnpm/@actions+github@6.0.0/node_modules/@actions/github/lib/github.js
 var github = __nccwpck_require__(5942);
 ;// CONCATENATED MODULE: ./src/main.ts
@@ -36430,6 +36461,7 @@ async function run() {
 /**
  * The entrypoint for the action.
  */
+
 
 
 
