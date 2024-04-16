@@ -1,6 +1,6 @@
 import { registerEngine } from '../runner'
 import { renameSync } from 'fs'
-import { $$, TempBinDir, TempBinName } from '../utils'
+import { $$, TempBinName } from '../utils'
 
 const targetMap = {
   'darwin-amd64': 'darwin/amd64',
@@ -32,14 +32,13 @@ registerEngine({
   },
   async run(input) {
     const target = targetMap[input.target]
-    await $$({
-      cwd: input.dir
-    })`xgo -targets=${target} -out ${TempBinName} ${input.flags} ${input.pkgs}`
-    const outBin = `${TempBinDir}/${TempBinName.replace(input.target, '')}`
-    renameSync(
-      `${input.dir}/${TempBinName}-${input.target}${input.target.includes('windows') ? '.exe' : ''}`,
-      outBin
-    )
+    await input.$`xgo -targets=${target} -out ${TempBinName} ${input.flags} ${input.pkgs}`
+    const outBin = `${TempBinName.replace(input.target, '')}`
+    // renameSync(
+    //   `${input.dir}/${TempBinName}-${input.target}${input.target.includes('windows') ? '.exe' : ''}`,
+    //   outBin
+    // )
+    await input.$`mv ${TempBinName}* ${outBin}`
     return outBin
   }
 })

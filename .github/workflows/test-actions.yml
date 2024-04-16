@@ -13,6 +13,12 @@ permissions:
 
 jobs:
   test-action:
+    strategy:
+      matrix:
+        targets:
+          - '!(*musl*|*windows-arm64*)' # xgo
+          - 'linux-*-musl*' #musl
+          - 'windows-arm64' #win-arm64
     name: GitHub Actions Test
     runs-on: ubuntu-latest
 
@@ -31,6 +37,7 @@ jobs:
         uses: ./
         with:
           dir: './example'
+          targets: ${{ matrix.targets }}
 
       - name: Print Output
         id: output

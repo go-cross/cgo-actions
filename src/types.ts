@@ -1,3 +1,4 @@
+import { $$ } from './utils'
 export { Context } from '@actions/github/lib/context'
 
 export type CommonInput = {
@@ -6,6 +7,7 @@ export type CommonInput = {
   flags: string
   out_dir: string
   output: string
+  $: typeof $$
 }
 
 export type Input = CommonInput & {

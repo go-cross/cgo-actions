@@ -11,12 +11,15 @@ dependencies:
   '@actions/github':
     specifier: ^6.0.0
     version: 6.0.0
+  '@types/picomatch':
+    specifier: ^2.3.3
+    version: 2.3.3
   execa:
     specifier: ^8.0.1
     version: 8.0.1
-  minimatch:
-    specifier: ^9.0.4
-    version: 9.0.4
+  picomatch:
+    specifier: ^4.0.2
+    version: 4.0.2
 
 devDependencies:
   '@jest/globals':
@@ -1291,6 +1294,13 @@ packages:
       undici-types: 5.26.5
     dev: true
 
+  /@types/picomatch@2.3.3:
+    resolution:
+      {
+        integrity: sha512-Yll76ZHikRFCyz/pffKGjrCwe/le2CDwOP5F210KQo27kpRE46U2rDnzikNlVn6/ezH3Mhn46bJMTfeVTtcYMg==
+      }
+    dev: false
+
   /@types/semver@7.5.8:
     resolution:
       {
@@ -1941,6 +1951,7 @@ packages:
       {
         integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==
       }
+    dev: true
 
   /before-after-hook@2.2.3:
     resolution:
@@ -1966,6 +1977,7 @@ packages:
       }
     dependencies:
       balanced-match: 1.0.2
+    dev: true
 
   /braces@3.0.2:
     resolution:
@@ -4901,6 +4913,7 @@ packages:
     engines: { node: '>=16 || 14 >=14.17' }
     dependencies:
       brace-expansion: 2.0.1
+    dev: true
 
   /minimist@1.2.8:
     resolution:
@@ -5231,6 +5244,14 @@ packages:
       }
     engines: { node: '>=8.6' }
     dev: true
+
+  /picomatch@4.0.2:
+    resolution:
+      {
+        integrity: sha512-M7BAV6Rlcy5u+m6oPhAPFgJTzAioX/6B0DxyvDlo9l8+T3nLKbrczg2WLUyzd45L8RqfUMyGPzekbMvX2Ldkwg==
+      }
+    engines: { node: '>=12' }
+    dev: false
 
   /pirates@4.0.6:
     resolution:

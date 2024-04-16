@@ -1,8 +1,8 @@
 import { Context, CommonInput, Engine, Input } from './types'
 import * as core from '@actions/core'
-import { TempBinDir, engineKey, getTempBinPath } from './utils'
+import { $$, engineKey, getTempBinPath } from './utils'
 import { readdirSync, renameSync, mkdirSync, existsSync } from 'fs'
-import { minimatch } from 'minimatch'
+import pm from 'picomatch'
 
 const engines = new Map<string, Engine>()
 const prepared = new Set<string>()
@@ -17,7 +17,7 @@ export class Runner {
   public constructor(readonly ctx: Context) {
     this.initInput(ctx)
     core.info(`Making necessary directories...`)
-    for (const dir of [TempBinDir, this.input.out_dir]) {
+    for (const dir of [this.input.out_dir]) {
       if (!existsSync(dir)) {
         mkdirSync(dir, { recursive: true })
       }
@@ -36,7 +36,10 @@ export class Runner {
       pkgs,
       flags,
       output,
-      out_dir
+      out_dir,
+      $: $$({
+        cwd: dir
+      })
     }
     core.info(`Input: ${JSON.stringify(this.input)}...`)
     const targets = core
@@ -46,15 +49,11 @@ export class Runner {
     this.targets = []
     const supportedTargets = Array.from(engines.keys())
     for (const target of supportedTargets) {
-      let match = false
       for (const pattern of targets) {
-        if (minimatch(target, pattern)) {
-          match = true
+        if (pm(pattern)(target)) {
+          this.targets.push(target)
           break
         }
-      }
-      if (match) {
-        this.targets.push(target)
       }
     }
     core.info(`Targets: \n${this.targets.join('\n')}...`)
@@ -78,7 +77,7 @@ export class Runner {
       core.info(`Compiling target: ${target}...`)
       const out_file = (await engine.run(input)) ?? getTempBinPath(input)
       core.info(`Output file: ${out_file}...`)
-      const output = await this.getOutput({ ...this.input, target })
+      const output = await this.getOutput(input)
       core.info(`Renaming to: ${output}...`)
       renameSync(out_file, `${this.input.out_dir}/${output}`)
     }

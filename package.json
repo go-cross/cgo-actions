@@ -69,8 +69,9 @@
   "dependencies": {
     "@actions/core": "^1.10.1",
     "@actions/github": "^6.0.0",
+    "@types/picomatch": "^2.3.3",
     "execa": "^8.0.1",
-    "minimatch": "^9.0.4"
+    "picomatch": "^4.0.2"
   },
   "devDependencies": {
     "@jest/globals": "^29.7.0",
