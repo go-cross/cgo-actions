@@ -36390,11 +36390,11 @@ function engineGen(files) {
                 CC: file.replace('-cross', '-gcc')
                 // GOARM: getArmVersion(arch)
             };
-            if (arch.includes('arm')) {
+            if (file.includes('arm')) {
                 env.GOARCH = 'arm';
-                if (arch.includes('armv')) {
-                    env['GOARM'] = arch.split('armv')[1][0];
-                }
+            }
+            if (arch.includes('armv')) {
+                env['GOARM'] = arch.split('armv')[1][0];
             }
             core.info(`Building with env:\n${JSON.stringify(env, null, 2)}...`);
             await input.$({
