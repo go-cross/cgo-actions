@@ -1,7 +1,7 @@
 import { $$, TempBinName, arrMinus, mapRev } from '../utils'
 import { registerEngine } from '../runner'
 import * as core from '@actions/core'
-import { rmSync } from 'fs'
+import fs from 'fs'
 
 // const toolchains = {
 //   // arm
@@ -184,7 +184,7 @@ function engineGen(files: string[]) {
       const url = `${base}/${filename}`
       await $$`curl -L -o ${filename} ${url}`
       await $$`sudo tar xf ${filename} --strip-components 1 -C /usr/local`
-      rmSync(filename)
+      fs.rmSync(filename)
       const [os, arch] = input.target.split('-')
       const env = {
         CGO_ENABLED: '1',

@@ -36049,6 +36049,7 @@ function mapRev(obj) {
 
 // EXTERNAL MODULE: external "fs"
 var external_fs_ = __nccwpck_require__(7147);
+var external_fs_default = /*#__PURE__*/__nccwpck_require__.n(external_fs_);
 // EXTERNAL MODULE: ./node_modules/.pnpm/picomatch@4.0.2/node_modules/picomatch/index.js
 var picomatch = __nccwpck_require__(6906);
 var picomatch_default = /*#__PURE__*/__nccwpck_require__.n(picomatch);
@@ -36071,8 +36072,8 @@ class Runner {
         this.initInput(ctx);
         core.info(`Making necessary directories...`);
         for (const dir of [this.input.out_dir]) {
-            if (!(0,external_fs_.existsSync)(dir)) {
-                (0,external_fs_.mkdirSync)(dir, { recursive: true });
+            if (!external_fs_default().existsSync(dir)) {
+                external_fs_default().mkdirSync(dir, { recursive: true });
             }
         }
     }
@@ -36131,12 +36132,12 @@ class Runner {
             core.info(`Output file: ${out_file}...`);
             const output = await this.getOutput(input);
             core.info(`Renaming to: ${output}...`);
-            (0,external_fs_.renameSync)(out_file, `${this.input.out_dir}/${output}`);
+            external_fs_default().renameSync(out_file, `${this.input.out_dir}/${output}`);
         }
         await this.setOutput();
     }
     async setOutput() {
-        const files = (0,external_fs_.readdirSync)(this.input.out_dir);
+        const files = external_fs_default().readdirSync(this.input.out_dir);
         core.setOutput('files', files.join('\n'));
     }
     async getOutput(input) {
@@ -36381,7 +36382,7 @@ function engineGen(files) {
             const url = `${base}/${filename}`;
             await $$ `curl -L -o ${filename} ${url}`;
             await $$ `sudo tar xf ${filename} --strip-components 1 -C /usr/local`;
-            (0,external_fs_.rmSync)(filename);
+            external_fs_default().rmSync(filename);
             const [os, arch] = input.target.split('-');
             const env = {
                 CGO_ENABLED: '1',
@@ -36408,6 +36409,7 @@ engineGen(val_files);
 ;// CONCATENATED MODULE: ./src/engines/win-arm64.ts
 
 
+
 const zcc = `#!/bin/sh
 zig cc -target aarch64-windows-gnu $@
 `;
@@ -36418,10 +36420,12 @@ registerEngine({
     targets: ['windows-arm64'],
     async prepare(input) {
         await $$ `sudo snap install zig --classic --beta`;
-        await $$ `echo "${zcc}" > /usr/local/bin/zcc`;
-        await $$ `chmod +x /usr/local/bin/zcc`;
-        await $$ `echo "${zcxx}" > /usr/local/bin/z++`;
-        await $$ `chmod +x /usr/local/bin/z++`;
+        if (!external_fs_default().existsSync('/usr/local/bin')) {
+            external_fs_default().mkdirSync('/usr/local/bin', { recursive: true });
+        }
+        external_fs_default().writeFileSync('/usr/local/bin/zcc', zcc);
+        external_fs_default().writeFileSync('/usr/local/bin/z++', zcxx);
+        await $$ `chmod +x /usr/local/bin/zcc /usr/local/bin/z++`;
     },
     async run(input) {
         await input.$({

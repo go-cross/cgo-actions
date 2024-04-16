@@ -1,5 +1,4 @@
 import { registerEngine } from '../runner'
-import { renameSync } from 'fs'
 import { $$, TempBinName } from '../utils'
 
 const targetMap = {

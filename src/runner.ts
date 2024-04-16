@@ -1,7 +1,7 @@
 import { Context, CommonInput, Engine, Input } from './types'
 import * as core from '@actions/core'
 import { $$, engineKey, getTempBinPath } from './utils'
-import { readdirSync, renameSync, mkdirSync, existsSync } from 'fs'
+import fs from 'fs'
 import pm from 'picomatch'
 
 const engines = new Map<string, Engine>()
@@ -18,8 +18,8 @@ export class Runner {
     this.initInput(ctx)
     core.info(`Making necessary directories...`)
     for (const dir of [this.input.out_dir]) {
-      if (!existsSync(dir)) {
-        mkdirSync(dir, { recursive: true })
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true })
       }
     }
   }
@@ -80,13 +80,13 @@ export class Runner {
       core.info(`Output file: ${out_file}...`)
       const output = await this.getOutput(input)
       core.info(`Renaming to: ${output}...`)
-      renameSync(out_file, `${this.input.out_dir}/${output}`)
+      fs.renameSync(out_file, `${this.input.out_dir}/${output}`)
     }
     await this.setOutput()
   }
 
   private async setOutput() {
-    const files = readdirSync(this.input.out_dir)
+    const files = fs.readdirSync(this.input.out_dir)
     core.setOutput('files', files.join('\n'))
   }
 
