@@ -36207,7 +36207,6 @@ registerEngine({
 
 
 
-
 // const toolchains = {
 //   // arm
 //   // armeb-linux-musleabi-cross armeb-linux-musleabihf-cross
@@ -36375,9 +36374,9 @@ function engineGen(files) {
     registerEngine({
         targets: files.map(fileToTarget),
         async run(input) {
-            const base = core.getInput('base') ?? 'https://musl.cc';
+            const base = 'https://musl.cc';
             const file = targetToFile(input.target);
-            const filename = file + 'tgz';
+            const filename = file + '.tgz';
             const url = `${base}/${filename}`;
             await $$ `curl -L -o ${filename} ${url}`;
             await $$ `sudo tar xf ${filename} --strip-components 1 -C /usr/local`;
