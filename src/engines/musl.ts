@@ -150,7 +150,7 @@ const exp_files = arrMinus(all_files, ...val_files)
 
 const archMap = {
   x86_64: 'amd64',
-  aaarch64: 'arm64',
+  aarch64: 'arm64',
   mips64el: 'mips64le',
   mipsel: 'mipsle',
   powerpc64: 'ppc64',
