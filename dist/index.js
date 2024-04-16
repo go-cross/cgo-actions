@@ -36440,6 +36440,44 @@ registerEngine({
     }
 });
 
+;// CONCATENATED MODULE: ./src/engines/android.ts
+
+
+
+const arches = {
+    amd64: {
+        cc: 'x86_64-linux-android24-clang'
+    },
+    arm64: {
+        cc: 'aarch64-linux-android24-clang'
+    },
+    386: {
+        cc: 'i686-linux-android24-clang'
+    },
+    arm: {
+        cc: 'armv7a-linux-androideabi24-clang'
+    }
+};
+registerEngine({
+    targets: Object.keys(arches).map(arch => `android-${arch}`),
+    async prepare(input) {
+        await $$ `wget https://dl.google.com/android/repository/android-ndk-r26b-linux.zip`;
+        await $$ `unzip android-ndk-r26b-linux.zip`;
+        external_fs_default().rmSync('android-ndk-r26b-linux.zip');
+    },
+    async run(input) {
+        const arch = input.target.split('-')[1];
+        await input.$({
+            env: {
+                CGO_ENABLED: '1',
+                GOOS: 'android',
+                GOARCH: arch,
+                CC: `${process.cwd()}/android-ndk-r26b/toolchains/llvm/prebuilt/linux-x86_64/bin/${arches[arch].cc}`
+            }
+        }) `go build -o ${TempBinName} ${input.flags} ${input.pkgs}`;
+    }
+});
+
 // EXTERNAL MODULE: ./node_modules/.pnpm/@actions+github@6.0.0/node_modules/@actions/github/lib/github.js
 var github = __nccwpck_require__(5942);
 ;// CONCATENATED MODULE: ./src/main.ts
@@ -36466,6 +36504,7 @@ async function run() {
 /**
  * The entrypoint for the action.
  */
+
 
 
 

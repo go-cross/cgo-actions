@@ -1,4 +1,4 @@
-name: Continuous Integration
+name: Test Actions
 
 on:
   pull_request:
@@ -16,9 +16,10 @@ jobs:
     strategy:
       matrix:
         targets:
-          - '!(*musl*|*windows-arm64*)' # xgo
+          - '!(*musl*|*windows-arm64*|*android*)' # xgo
           - 'linux-*-musl*' #musl
           - 'windows-arm64' #win-arm64
+          - 'android-*' #android
     name: GitHub Actions Test
     runs-on: ubuntu-latest
 
