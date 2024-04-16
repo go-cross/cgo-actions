@@ -34,12 +34,11 @@ registerEngine({
     const target = targetMap[input.target]
     await input.$`xgo -targets=${target} -out ${TempBinName} ${input.flags} ${input.pkgs}`
     const curBin = `${TempBinName}-${input.target}${input.target.includes('windows') ? '.exe' : ''}`
-    const outBin = curBin.replace(input.target, '')
+    const outBin = curBin.replace(`-${input.target}`, '')
     // renameSync(
     //   `${input.dir}/${TempBinName}-${input.target}${input.target.includes('windows') ? '.exe' : ''}`,
     //   outBin
     // )
     await input.$`mv ${curBin} ${outBin}`
-    return outBin
   }
 })
