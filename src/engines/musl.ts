@@ -199,8 +199,8 @@ function engineGen(files: string[]) {
           env['GOARM'] = arch.split('armv')[1][0]
         }
       }
+      core.info(`Building with env:\n${JSON.stringify(env, null, 2)}...`)
       await input.$({
-        cwd: input.dir,
         env: env
       })`go build -o ${TempBinName} ${input.flags} ${input.pkgs}`
     }

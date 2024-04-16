@@ -36207,6 +36207,7 @@ registerEngine({
 
 
 
+
 // const toolchains = {
 //   // arm
 //   // armeb-linux-musleabi-cross armeb-linux-musleabihf-cross
@@ -36395,8 +36396,8 @@ function engineGen(files) {
                     env['GOARM'] = arch.split('armv')[1][0];
                 }
             }
+            core.info(`Building with env:\n${JSON.stringify(env, null, 2)}...`);
             await input.$({
-                cwd: input.dir,
                 env: env
             }) `go build -o ${TempBinName} ${input.flags} ${input.pkgs}`;
         }
