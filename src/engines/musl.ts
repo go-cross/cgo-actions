@@ -174,6 +174,8 @@ function targetToFile(target: string) {
   return `${archMapRev[arch] ?? arch}-${osMapRev[os] ?? os}-${musl}-cross`
 }
 
+const staticLinkFlags = `--extldflags '-static -fpic'`
+
 function engineGen(files: string[]) {
   registerEngine({
     targets: files.map(fileToTarget),
@@ -200,9 +202,28 @@ function engineGen(files: string[]) {
         env['GOARM'] = arch.split('armv')[1][0]
       }
       core.info(`Building with env:\n${JSON.stringify(env, null, 2)}...`)
+      let flags = input.flags
+      if (core.getInput('static-link-for-musl') === 'true') {
+        core.info('Setting static link for musl...')
+        if (flags.includes(staticLinkFlags)) {
+          core.info('Already set static link flags.')
+        } else {
+          const insertFlag = '-ldflags='
+          const insertIndex = flags.indexOf(insertFlag)
+          if (insertIndex === -1) {
+            flags += `-ldflags='${staticLinkFlags}'`
+          } else {
+            flags =
+              flags.slice(0, insertIndex + insertFlag.length) +
+              staticLinkFlags +
+              ' ' +
+              flags.slice(insertIndex + insertFlag.length)
+          }
+        }
+      }
       await input.$({
         env: env
-      })`go build -o ${TempBinName} ${input.flags} ${input.pkgs}`
+      })`go build -o ${TempBinName} ${flags} ${input.pkgs}`
     }
   })
 }

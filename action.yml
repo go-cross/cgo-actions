@@ -21,6 +21,10 @@ inputs:
     description: 'The flags to pass to the go build command'
     required: false
     default: '-ldflags=-w -s'
+  static-link-for-musl:
+    description: 'Whether to statically link for the musl libc'
+    required: false
+    default: 'true'
   targets:
     description: 'The targets to build for'
     required: false

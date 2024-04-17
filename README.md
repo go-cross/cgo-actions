@@ -65,14 +65,15 @@ jobs:
 
 ## Inputs
 
-| Input    | Description                               | Required | Default           |
-| -------- | ----------------------------------------- | -------- | ----------------- |
-| dir      | The directory to work                     | No       | .                 |
-| packages | The packages to build                     | No       | .                 |
-| flags    | The flags to pass to the go build command | No       | -ldflags=-w -s    |
-| targets  | The targets to build for                  | No       | \*                |
-| out-dir  | The output directory                      | No       | bin               |
-| output   | The output binary name                    | No       | $repo-$target$ext |
+| Input                | Description                                  | Required | Default           |
+| -------------------- | -------------------------------------------- | -------- | ----------------- |
+| dir                  | The directory to work                        | No       | .                 |
+| packages             | The packages to build                        | No       | .                 |
+| flags                | The flags to pass to the go build command    | No       | -ldflags=-w -s    |
+| static-link-for-musl | Whether to statically link for the musl libc | No       | true              |
+| targets              | The targets to build for                     | No       | \*                |
+| out-dir              | The output directory                         | No       | bin               |
+| output               | The output binary name                       | No       | $repo-$target$ext |
 
 ### Supported Targets
 
