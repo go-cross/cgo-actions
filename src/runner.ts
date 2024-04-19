@@ -98,17 +98,15 @@ export class Runner {
       sha: this.ctx.sha,
       short_sha: this.ctx.sha.slice(0, 7),
       pr: this.ctx.issue.number?.toString() ?? '',
-      ext: input.target.includes('windows') ? '.exe' : ''
+      ext: input.target.includes('windows') ? '.exe' : '',
+      tag: this.ctx.ref.replace('refs/tags/', '')
     } as Record<string, string | ((input: Input) => string)>
     let output = input.output
     for (const [magic, target] of Object.entries(magicMap)) {
       const key = `$${magic}`
-      if (output.includes(key)) {
-        output = output.replace(
-          key,
-          typeof target === 'string' ? target : target(input)
-        )
-      }
+      const value = typeof target === 'string' ? target : target(input)
+      core.info(`Replacing ${key} with ${value}...`)
+      output = output.replaceAll(key, value)
     }
     return output
   }
