@@ -135,6 +135,7 @@ const val_files = [
   'armv7l-linux-musleabihf-cross',
   'armv7m-linux-musleabi-cross',
   'armv7r-linux-musleabihf-cross',
+  'i486-linux-musl-cross',
   'mips-linux-musl-cross',
   'mips64-linux-musl-cross',
   'mips64el-linux-musl-cross',
@@ -154,7 +155,8 @@ const archMap = {
   mips64el: 'mips64le',
   mipsel: 'mipsle',
   powerpc64: 'ppc64',
-  powerpc64le: 'ppc64le'
+  powerpc64le: 'ppc64le',
+  i486: '386'
 } as Record<string, string>
 const archMapRev = mapRev(archMap)
 
