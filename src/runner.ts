@@ -48,7 +48,7 @@ export class Runner {
       .map(t => t.trim())
     this.targets = []
     const supportedTargets = Array.from(engines.keys())
-    core.info(`Supported targets: \n${supportedTargets.join('\n')}...`)
+    core.debug(`Supported targets: \n${supportedTargets.join('\n')}...`)
     for (const target of supportedTargets) {
       for (const pattern of targets) {
         if (pm(pattern)(target)) {
