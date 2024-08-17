@@ -31,12 +31,14 @@ export class Runner {
     const flags = core.getInput('flags')
     const output = core.getInput('output')
     const out_dir = core.getInput('out-dir')
+    const musl_target_format = core.getInput('musl-target-format')
     this.input = {
       dir,
       pkgs,
       flags,
       output,
       out_dir,
+      musl_target_format,
       $: $$({
         cwd: dir
       })
@@ -78,9 +80,10 @@ export class Runner {
       core.info(`Compiling target: ${target}...`)
       const out_file = (await engine.run(input)) ?? getTempBinPath(input)
       core.info(`Output file: ${out_file}...`)
-      const output = await this.getOutput(input)
+      const output = await this.getOutput(input, engine)
       core.info(`Renaming to: ${output}...`)
-      fs.renameSync(out_file, `${this.input.out_dir}/${output}`)
+      const output_full = `${this.input.out_dir}/${output}`
+      fs.renameSync(out_file, output_full)
     }
     await this.setOutput()
   }
@@ -90,7 +93,7 @@ export class Runner {
     core.setOutput('files', files.join('\n'))
   }
 
-  private async getOutput(input: Input): Promise<string> {
+  private async getOutput(input: Input, engine: Engine): Promise<string> {
     const magicMap = {
       owner: this.ctx.repo.owner,
       repo: this.ctx.repo.repo,
@@ -101,6 +104,9 @@ export class Runner {
       ext: input.target.includes('windows') ? '.exe' : '',
       tag: this.ctx.ref.replace('refs/tags/', '')
     } as Record<string, string | ((input: Input) => string)>
+    if (engine.on_target_rename) {
+      magicMap.target = await engine.on_target_rename(input)
+    }
     let output = input.output
     for (const [magic, target] of Object.entries(magicMap)) {
       const key = `$${magic}`

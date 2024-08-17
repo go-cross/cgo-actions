@@ -74,6 +74,7 @@ jobs:
 | targets              | The targets to build for                     | No       | \*                |
 | out-dir              | The output directory                         | No       | bin               |
 | output               | The output binary name                       | No       | $repo-$target$ext |
+| musl-target-format   | The format of the musl target                | No       | $os-$arch-$musl   |
 
 ### Supported Targets
 

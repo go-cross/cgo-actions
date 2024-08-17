@@ -226,6 +226,14 @@ function engineGen(files: string[]) {
       await input.$({
         env: env
       })`go build -o ${TempBinName} ${flags} ${input.pkgs}`
+    },
+    async on_target_rename(input) {
+      const [os, arch, musl] = input.target.split('-')
+      let res = input.musl_target_format
+      res = res.replace('$os', os)
+      res = res.replace('$arch', arch)
+      res = res.replace('$musl', musl)
+      return res
     }
   })
 }

@@ -36085,12 +36085,14 @@ class Runner {
         const flags = core.getInput('flags');
         const output = core.getInput('output');
         const out_dir = core.getInput('out-dir');
+        const musl_target_format = core.getInput('musl-target-format');
         this.input = {
             dir,
             pkgs,
             flags,
             output,
             out_dir,
+            musl_target_format,
             $: $$({
                 cwd: dir
             })
@@ -36130,9 +36132,10 @@ class Runner {
             core.info(`Compiling target: ${target}...`);
             const out_file = (await engine.run(input)) ?? getTempBinPath(input);
             core.info(`Output file: ${out_file}...`);
-            const output = await this.getOutput(input);
+            const output = await this.getOutput(input, engine);
             core.info(`Renaming to: ${output}...`);
-            external_fs_default().renameSync(out_file, `${this.input.out_dir}/${output}`);
+            const output_full = `${this.input.out_dir}/${output}`;
+            external_fs_default().renameSync(out_file, output_full);
         }
         await this.setOutput();
     }
@@ -36140,7 +36143,7 @@ class Runner {
         const files = external_fs_default().readdirSync(this.input.out_dir);
         core.setOutput('files', files.join('\n'));
     }
-    async getOutput(input) {
+    async getOutput(input, engine) {
         const magicMap = {
             owner: this.ctx.repo.owner,
             repo: this.ctx.repo.repo,
@@ -36151,6 +36154,9 @@ class Runner {
             ext: input.target.includes('windows') ? '.exe' : '',
             tag: this.ctx.ref.replace('refs/tags/', '')
         };
+        if (engine.on_target_rename) {
+            magicMap.target = await engine.on_target_rename(input);
+        }
         let output = input.output;
         for (const [magic, target] of Object.entries(magicMap)) {
             const key = `$${magic}`;
@@ -36426,6 +36432,14 @@ function engineGen(files) {
             await input.$({
                 env: env
             }) `go build -o ${TempBinName} ${flags} ${input.pkgs}`;
+        },
+        async on_target_rename(input) {
+            const [os, arch, musl] = input.target.split('-');
+            let res = input.musl_target_format;
+            res = res.replace('$os', os);
+            res = res.replace('$arch', arch);
+            res = res.replace('$musl', musl);
+            return res;
         }
     });
 }

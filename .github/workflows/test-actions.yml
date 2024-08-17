@@ -40,6 +40,7 @@ jobs:
         with:
           dir: './example'
           targets: ${{ matrix.targets }}
+          musl-target-format: $os-$musl-$arch
 
       - name: Print Output
         id: output

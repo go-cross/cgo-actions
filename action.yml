@@ -38,6 +38,10 @@ inputs:
     # linux-arm-musleabihf, linux-armel-musleabihf, linux-armv5l-musleabihf, linux-armv6-musleabihf, linux-armv7l-musleabihf, linux-armv7r-musleabihf
     # windows-386, windows-amd64, windows-arm64
     default: '*'
+  musl-target-format:
+    description: 'The format for musl target'
+    required: false
+    default: '$os-$arch-$musl'
   out-dir:
     description: 'The output directory'
     required: false
