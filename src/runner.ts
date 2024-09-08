@@ -13,6 +13,10 @@ export function registerEngine(engine: Engine) {
   }
 }
 
+export function getSupportedTargets(): string[] {
+  return Array.from(engines.keys())
+}
+
 export class Runner {
   public constructor(readonly ctx: Context) {
     this.initInput(ctx)
@@ -49,7 +53,7 @@ export class Runner {
       .split(',')
       .map(t => t.trim())
     this.targets = []
-    const supportedTargets = Array.from(engines.keys())
+    const supportedTargets = getSupportedTargets()
     core.debug(`Supported targets: \n${supportedTargets.join('\n')}...`)
     for (const target of supportedTargets) {
       for (const pattern of targets) {

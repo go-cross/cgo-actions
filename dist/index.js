@@ -33840,8 +33840,6 @@ var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
 
-// EXTERNAL MODULE: ./node_modules/.pnpm/@actions+core@1.10.1/node_modules/@actions/core/lib/core.js
-var core = __nccwpck_require__(9093);
 ;// CONCATENATED MODULE: external "node:buffer"
 const external_node_buffer_namespaceObject = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:buffer");
 ;// CONCATENATED MODULE: external "node:path"
@@ -36047,6 +36045,8 @@ function mapRev(obj) {
     return rev;
 }
 
+// EXTERNAL MODULE: ./node_modules/.pnpm/@actions+core@1.10.1/node_modules/@actions/core/lib/core.js
+var core = __nccwpck_require__(9093);
 // EXTERNAL MODULE: external "fs"
 var external_fs_ = __nccwpck_require__(7147);
 var external_fs_default = /*#__PURE__*/__nccwpck_require__.n(external_fs_);
@@ -36064,6 +36064,9 @@ function registerEngine(engine) {
     for (const target of engine.targets) {
         engines.set(target, engine);
     }
+}
+function getSupportedTargets() {
+    return Array.from(engines.keys());
 }
 class Runner {
     ctx;
@@ -36102,7 +36105,7 @@ class Runner {
             .split(',')
             .map(t => t.trim());
         this.targets = [];
-        const supportedTargets = Array.from(engines.keys());
+        const supportedTargets = getSupportedTargets();
         core.debug(`Supported targets: \n${supportedTargets.join('\n')}...`);
         for (const target of supportedTargets) {
             for (const pattern of targets) {
@@ -36168,46 +36171,41 @@ class Runner {
     }
 }
 
-;// CONCATENATED MODULE: ./src/engines/xgo.ts
+;// CONCATENATED MODULE: ./src/engines/android.ts
 
 
-const targetMap = {
-    'darwin-amd64': 'darwin/amd64',
-    'darwin-arm64': 'darwin/arm64',
-    'linux-386': 'linux/386',
-    'linux-amd64': 'linux/amd64',
-    'linux-arm-5': 'linux/arm-5',
-    'linux-arm-6': 'linux/arm-6',
-    'linux-arm-7': 'linux/arm-7',
-    'linux-arm64': 'linux/arm64',
-    'linux-mips': 'linux/mips',
-    'linux-mipsle': 'linux/mipsle',
-    'linux-mips64': 'linux/mips64',
-    'linux-mips64le': 'linux/mips64le',
-    'linux-ppc64le': 'linux/ppc64le',
-    'linux-riscv64': 'linux/riscv64',
-    'linux-s390x': 'linux/s390x',
-    'windows-386': 'windows/386',
-    'windows-amd64': 'windows/amd64'
+
+const arches = {
+    amd64: {
+        cc: 'x86_64-linux-android24-clang'
+    },
+    arm64: {
+        cc: 'aarch64-linux-android24-clang'
+    },
+    386: {
+        cc: 'i686-linux-android24-clang'
+    },
+    arm: {
+        cc: 'armv7a-linux-androideabi24-clang'
+    }
 };
 registerEngine({
-    targets: Object.keys(targetMap),
+    targets: Object.keys(arches).map(arch => `android-${arch}`),
     async prepare(input) {
-        // docker pull crazymax/xgo:latest
-        await $$ `docker pull crazymax/xgo:latest`;
-        // go install github.com/crazy-max/xgo@latest
-        await $$ `go install github.com/crazy-max/xgo@latest`;
+        await $$ `wget https://dl.google.com/android/repository/android-ndk-r26b-linux.zip`;
+        await $$ `unzip android-ndk-r26b-linux.zip`;
+        external_fs_default().rmSync('android-ndk-r26b-linux.zip');
     },
     async run(input) {
-        const target = targetMap[input.target];
-        await input.$ `xgo -targets=${target} -out ${TempBinName} ${input.flags} ${input.pkgs}`;
-        const curBin = `${TempBinName}-${input.target}${input.target.includes('windows') ? '.exe' : ''}`;
-        const outBin = curBin.replace(`-${input.target}`, '');
-        // renameSync(
-        //   `${input.dir}/${TempBinName}-${input.target}${input.target.includes('windows') ? '.exe' : ''}`,
-        //   outBin
-        // )
-        await input.$ `mv ${curBin} ${outBin}`;
+        const arch = input.target.split('-')[1];
+        await input.$({
+            env: {
+                CGO_ENABLED: '1',
+                GOOS: 'android',
+                GOARCH: arch,
+                CC: `${process.cwd()}/android-ndk-r26b/toolchains/llvm/prebuilt/linux-x86_64/bin/${arches[arch].cc}`
+            }
+        }) `go build -o ${TempBinName} ${input.flags} ${input.pkgs}`;
     }
 });
 
@@ -36479,43 +36477,54 @@ registerEngine({
     }
 });
 
-;// CONCATENATED MODULE: ./src/engines/android.ts
+;// CONCATENATED MODULE: ./src/engines/xgo.ts
 
 
-
-const arches = {
-    amd64: {
-        cc: 'x86_64-linux-android24-clang'
-    },
-    arm64: {
-        cc: 'aarch64-linux-android24-clang'
-    },
-    386: {
-        cc: 'i686-linux-android24-clang'
-    },
-    arm: {
-        cc: 'armv7a-linux-androideabi24-clang'
-    }
+const targetMap = {
+    'darwin-amd64': 'darwin/amd64',
+    'darwin-arm64': 'darwin/arm64',
+    'linux-386': 'linux/386',
+    'linux-amd64': 'linux/amd64',
+    'linux-arm-5': 'linux/arm-5',
+    'linux-arm-6': 'linux/arm-6',
+    'linux-arm-7': 'linux/arm-7',
+    'linux-arm64': 'linux/arm64',
+    'linux-mips': 'linux/mips',
+    'linux-mipsle': 'linux/mipsle',
+    'linux-mips64': 'linux/mips64',
+    'linux-mips64le': 'linux/mips64le',
+    'linux-ppc64le': 'linux/ppc64le',
+    'linux-riscv64': 'linux/riscv64',
+    'linux-s390x': 'linux/s390x',
+    'windows-386': 'windows/386',
+    'windows-amd64': 'windows/amd64'
 };
 registerEngine({
-    targets: Object.keys(arches).map(arch => `android-${arch}`),
+    targets: Object.keys(targetMap),
     async prepare(input) {
-        await $$ `wget https://dl.google.com/android/repository/android-ndk-r26b-linux.zip`;
-        await $$ `unzip android-ndk-r26b-linux.zip`;
-        external_fs_default().rmSync('android-ndk-r26b-linux.zip');
+        // docker pull crazymax/xgo:latest
+        await $$ `docker pull crazymax/xgo:latest`;
+        // go install github.com/crazy-max/xgo@latest
+        await $$ `go install github.com/crazy-max/xgo@latest`;
     },
     async run(input) {
-        const arch = input.target.split('-')[1];
-        await input.$({
-            env: {
-                CGO_ENABLED: '1',
-                GOOS: 'android',
-                GOARCH: arch,
-                CC: `${process.cwd()}/android-ndk-r26b/toolchains/llvm/prebuilt/linux-x86_64/bin/${arches[arch].cc}`
-            }
-        }) `go build -o ${TempBinName} ${input.flags} ${input.pkgs}`;
+        const target = targetMap[input.target];
+        await input.$ `xgo -targets=${target} -out ${TempBinName} ${input.flags} ${input.pkgs}`;
+        const curBin = `${TempBinName}-${input.target}${input.target.includes('windows') ? '.exe' : ''}`;
+        const outBin = curBin.replace(`-${input.target}`, '');
+        // renameSync(
+        //   `${input.dir}/${TempBinName}-${input.target}${input.target.includes('windows') ? '.exe' : ''}`,
+        //   outBin
+        // )
+        await input.$ `mv ${curBin} ${outBin}`;
     }
 });
+
+;// CONCATENATED MODULE: ./src/engines/all.ts
+
+
+
+
 
 // EXTERNAL MODULE: ./node_modules/.pnpm/@actions+github@6.0.0/node_modules/@actions/github/lib/github.js
 var github = __nccwpck_require__(5942);
@@ -36543,9 +36552,6 @@ async function run() {
 /**
  * The entrypoint for the action.
  */
-
-
-
 
 
 // eslint-disable-next-line @typescript-eslint/no-floating-promises
