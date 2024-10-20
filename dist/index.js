@@ -36520,7 +36520,48 @@ registerEngine({
     }
 });
 
+;// CONCATENATED MODULE: ./src/engines/freebsd.ts
+
+
+
+const freebsd_arches = {
+    amd64: {
+        os_arch: 'amd64',
+        target: 'x86_64-unknown-freebsd14.1'
+    },
+    arm64: {
+        os_arch: 'arm64',
+        target: 'aarch64-unknown-freebsd14.1'
+    },
+    386: {
+        os_arch: 'i386',
+        target: 'i386-unknown-freebsd14.1'
+    }
+};
+registerEngine({
+    targets: Object.keys(freebsd_arches).map(arch => `freebsd-${arch}`),
+    // async prepare(input) {},
+    async run(input) {
+        const arch = input.target.split('-')[1];
+        const os_arch = freebsd_arches[arch].os_arch;
+        const target = freebsd_arches[arch].target;
+        await $$ `wget -q https://download.freebsd.org/releases/${os_arch}/14.1-RELEASE/base.txz`;
+        await $$ `sudo tar -xf ./base.txz -C ${process.cwd()}/${os_arch}`;
+        external_fs_default().rmSync('base.txz');
+        await input.$({
+            env: {
+                CGO_ENABLED: '1',
+                GOOS: 'freebsd',
+                GOARCH: arch,
+                CGO_LDFLAGS: '-fuse-ld=lld',
+                CC: `clang --target=${target} --sysroot=${process.cwd()}/${os_arch}`
+            }
+        }) `go build -o ${TempBinName} ${input.flags} ${input.pkgs}`;
+    }
+});
+
 ;// CONCATENATED MODULE: ./src/engines/all.ts
+
 
 
 
