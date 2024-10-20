@@ -9,6 +9,10 @@ on:
       - v1
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
@@ -17,10 +21,11 @@ jobs:
     strategy:
       matrix:
         targets:
-          - '!(*musl*|*windows-arm64*|*android*)' # xgo
+          - '!(*musl*|*windows-arm64*|*android*|*freebsd*)' # xgo
           - 'linux-*-musl*' #musl
           - 'windows-arm64' #win-arm64
           - 'android-*' #android
+          - 'freebsd-*' #freebsd
     name: GitHub Actions Test
     runs-on: ubuntu-latest
 
