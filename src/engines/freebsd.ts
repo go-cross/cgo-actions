@@ -24,8 +24,10 @@ registerEngine({
     const arch = input.target.split('-')[1]
     const os_arch = arches[arch].os_arch
     const target = arches[arch].target
+    const sysroot_dir = `${process.cwd()}/${os_arch}`
     await $$`wget -q https://download.freebsd.org/releases/${os_arch}/14.1-RELEASE/base.txz`
-    await $$`sudo tar -xf ./base.txz -C ${process.cwd()}/${os_arch}`
+    fs.mkdirSync(sysroot_dir, { recursive: true })
+    await $$`sudo tar -xf ./base.txz -C ${sysroot_dir}`
     fs.rmSync('base.txz')
     await input.$({
       env: {
@@ -33,7 +35,7 @@ registerEngine({
         GOOS: 'freebsd',
         GOARCH: arch,
         CGO_LDFLAGS: '-fuse-ld=lld',
-        CC: `clang --target=${target} --sysroot=${process.cwd()}/${os_arch}`
+        CC: `clang --target=${target} --sysroot=${sysroot_dir}`
       }
     })`go build -o ${TempBinName} ${input.flags} ${input.pkgs}`
   }
