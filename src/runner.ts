@@ -172,8 +172,13 @@ export class Runner {
       username: os.userInfo().username,
       built_on: `${os.userInfo().username}@${os.hostname()}`,
       built_at: new Date().toLocaleString(),
-      git_author: (await $`git show -s ${"--format='%an <%ae>'"}`).stdout,
-      git_commit: (await $`git show -s ${"--format='%H'"}`).stdout,
+      git_author: (
+        await $`git show -s ${"--format='%an <%ae>'"}`
+      ).stdout.replaceAll("'", ''),
+      git_commit: (await $`git show -s ${"--format='%H'"}`).stdout.replaceAll(
+        "'",
+        ''
+      ),
       go_version: goVersion
     }
   }

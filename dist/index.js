@@ -36236,8 +36236,8 @@ class Runner {
             username: external_os_default().userInfo().username,
             built_on: `${external_os_default().userInfo().username}@${external_os_default().hostname()}`,
             built_at: new Date().toLocaleString(),
-            git_author: (await $ `git show -s ${"--format='%an <%ae>'"}`).stdout,
-            git_commit: (await $ `git show -s ${"--format='%H'"}`).stdout,
+            git_author: (await $ `git show -s ${"--format='%an <%ae>'"}`).stdout.replaceAll("'", ''),
+            git_commit: (await $ `git show -s ${"--format='%H'"}`).stdout.replaceAll("'", ''),
             go_version: goVersion
         };
     }

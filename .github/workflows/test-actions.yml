@@ -6,7 +6,7 @@ on:
       - v1
   push:
     branches:
-      - v1
+      - dev
   workflow_dispatch:
 
 concurrency:
