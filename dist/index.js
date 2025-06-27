@@ -36604,15 +36604,15 @@ registerEngine({
 const freebsd_arches = {
     amd64: {
         os_arch: 'amd64',
-        target: 'x86_64-unknown-freebsd14.1'
+        target: 'x86_64-unknown-freebsd14.3'
     },
     arm64: {
         os_arch: 'arm64',
-        target: 'aarch64-unknown-freebsd14.1'
+        target: 'aarch64-unknown-freebsd14.3'
     },
     386: {
         os_arch: 'i386',
-        target: 'i386-unknown-freebsd14.1'
+        target: 'i386-unknown-freebsd14.3'
     }
 };
 registerEngine({
@@ -36623,7 +36623,7 @@ registerEngine({
         const os_arch = freebsd_arches[arch].os_arch;
         const target = freebsd_arches[arch].target;
         const sysroot_dir = `${process.cwd()}/${os_arch}`;
-        await $$ `wget -q https://download.freebsd.org/releases/${os_arch}/14.1-RELEASE/base.txz`;
+        await $$ `wget -q https://download.freebsd.org/releases/${os_arch}/14.3-RELEASE/base.txz`;
         external_fs_default().mkdirSync(sysroot_dir, { recursive: true });
         await $$ `sudo tar -xf ./base.txz -C ${sysroot_dir}`;
         external_fs_default().rmSync('base.txz');
